@@ -1,4 +1,4 @@
-import com.sun.jdi.connect.Connector.Argument;
+
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,10 +9,10 @@ import java.util.TreeSet;
 public class Args {
     private String schema;
     private String[] args;
+    private boolean valid = true;
     private Set<Character> unexpectedArguments = new TreeSet<>();
     private Map<Character, ArgumentMarshaler> marshalers = new HashMap<>();
     private Set<Character> argsFound = new HashSet<>();
-    private boolean valid = true;
     private int currentArgument;
     private char errorArgumentId = '\0';
     private String errorParameter = "TILT";
@@ -39,7 +39,7 @@ public class Args {
 
     private boolean parseSchema() throws ParseException {
         for (String element : schema.split(",")) {
-            if (element.length() > 0) {
+            if (!element.isEmpty()) {
                 String trimmedElement = element.trim();
                 parseSchemaElement(trimmedElement);
             }
@@ -52,11 +52,11 @@ public class Args {
         String elementTail = element.substring(1);
         validateSchemaElementId(elementId);
         if (isBooleanSchemaElement(elementTail)) {
-            parseBooleanSchemaElement(elementId);
+            marshalers.put(elementId, new BooleanArgumentMarshaler());
         } else if (isStringSchemaElement(elementTail)) {
-            parseStringSchemaElement(elementId);
+            marshalers.put(elementId, new StringArgumentMarshaler());
         } else if (isIntegerSchemaElement(elementTail)) {
-            parseIntegerSchemaElement(elementId);
+            marshalers.put(elementId, new IntegerArgumentMarshaler());
         } else {
             throw new ParseException(
                     String.format("Argument: %c has invalid format: %s.", elementId, elementTail), 0);
@@ -70,25 +70,12 @@ public class Args {
             );
         }
     }
-
-    private void parseBooleanSchemaElement(char elementId) {
-        marshalers.put(elementId, new BooleanArgumentMarshaler());
-    }
-
-    private void parseIntegerSchemaElement(char elementId) {
-        marshalers.put(elementId, new IntegerArgumentMarshaler());
-    }
-
-    private void parseStringSchemaElement(char elementId) {
-        marshalers.put(elementId, new StringArgumentMarshaler());
-    }
-
     private boolean isStringSchemaElement(String elementTail) {
         return elementTail.equals("*");
     }
 
     private boolean isBooleanSchemaElement(String elementTail) {
-        return elementTail.length() == 0;
+        return elementTail.isEmpty();
     }
 
     private boolean isIntegerSchemaElement(String elementTail) {
@@ -156,7 +143,6 @@ public class Args {
             errorCode = ErrorCode.MISSING_INTEGER;
             throw new ArgsException();
         } catch (ArgsException e) {
-            valid = false;
             errorParameter = parameter;
             errorCode = ErrorCode.INVALID_INTEGER;
             throw e;
@@ -265,12 +251,11 @@ public class Args {
     }
 
     private abstract class ArgumentMarshaler {
-        public abstract void set(String s);
+        public abstract void set(String s) throws ArgsException;
         public abstract Object get();
     }
 
     private class BooleanArgumentMarshaler extends ArgumentMarshaler {
-
         private boolean booleanValue = false;
         public void set(String s) {
             booleanValue = true;
@@ -294,7 +279,6 @@ public class Args {
     }
 
     private class IntegerArgumentMarshaler extends ArgumentMarshaler {
-
         private int intValue = 0;
         public void set(String s) throws ArgsException {
             try {
