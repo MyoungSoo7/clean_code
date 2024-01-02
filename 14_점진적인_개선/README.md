@@ -21,3 +21,8 @@ Args
 
 
 - 모든 논리를 ArgumentMarshaler로 옮기고 파생 클래스를 만들어 기능 분산
+
+#### 첫 번째 리펙토링을 끝낸 버전
+- 첫머리의 변수가 그대로 남아있음
+- setArgument는 유형을 일일이 확인함
+    -> args 배열을 list로 변환 후 Iterator를 set 함수로 전달하기
