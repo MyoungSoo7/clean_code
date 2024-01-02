@@ -10,8 +10,6 @@ public class Args {
     private String schema;
     private String[] args;
     private Set<Character> unexpectedArguments = new TreeSet<>();
-    private Map<Character, ArgumentMarshaler> stringArgs = new HashMap<>();
-    private Map<Character, ArgumentMarshaler> intArgs = new HashMap<>();
     private Map<Character, ArgumentMarshaler> marshalers = new HashMap<>();
     private Set<Character> argsFound = new HashSet<>();
     private boolean valid = true;
@@ -74,20 +72,15 @@ public class Args {
     }
 
     private void parseBooleanSchemaElement(char elementId) {
-        ArgumentMarshaler m = new BooleanArgumentMarshaler();
-        marshalers.put(elementId, m);
+        marshalers.put(elementId, new BooleanArgumentMarshaler());
     }
 
     private void parseIntegerSchemaElement(char elementId) {
-        ArgumentMarshaler m = new IntegerArgumentMarshaler();
-        intArgs.put(elementId, m);
-        marshalers.put(elementId, m);
+        marshalers.put(elementId, new IntegerArgumentMarshaler());
     }
 
     private void parseStringSchemaElement(char elementId) {
-        ArgumentMarshaler m = new StringArgumentMarshaler();
-        stringArgs.put(elementId, m);
-        marshalers.put(elementId, m);
+        marshalers.put(elementId, new StringArgumentMarshaler());
     }
 
     private boolean isStringSchemaElement(String elementTail) {
@@ -227,13 +220,21 @@ public class Args {
 
 
     public String getString(char arg) {
-        Args.ArgumentMarshaler am = stringArgs.get(arg);
-        return am == null ? "" : (String)am.get();
+        Args.ArgumentMarshaler am = marshalers.get(arg);
+        try {
+            return am == null ? "" : (String)am.get();
+        } catch (ClassCastException e) {
+            return "";
+        }
     }
 
     public int getInt(char arg) {
-        Args.ArgumentMarshaler am = intArgs.get(arg);
-        return am == null ? 0 : (Integer)am.get();
+        Args.ArgumentMarshaler am = marshalers.get(arg);
+        try {
+            return am == null ? 0 : (Integer)am.get();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public boolean getBoolean(char arg) {
