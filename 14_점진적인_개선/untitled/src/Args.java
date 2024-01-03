@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,7 +29,7 @@ public class Args {
     }
 
     private boolean parse() throws ParseException {
-        if (schema.isEmpty() && args.length == 0) {
+        if (schema.isEmpty() && argsList.isEmpty()) {
             return true;
         }
         parseSchema();
@@ -86,8 +87,8 @@ public class Args {
     }
 
     private boolean parseArguments() throws ArgsException {
-        for (currentArgument = 0; currentArgument < args.length; currentArgument++) {
-            String arg = args[currentArgument];
+        for (currentArgument = argsList.iterator(); currentArgument.hasNext();) {
+            String arg = currentArgument.next();
             parseArgument(arg);
         }
         return true;
@@ -137,12 +138,11 @@ public class Args {
 
 
     private void setIntArg(ArgumentMarshaler m) throws ArgsException {
-        currentArgument++;
         String parameter = null;
         try {
-            parameter = args[currentArgument];
+            parameter = currentArgument.next();
             m.set(parameter);
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (NoSuchElementException e) {
             errorCode = ErrorCode.MISSING_INTEGER;
             throw new ArgsException();
         } catch (ArgsException e) {
@@ -153,10 +153,9 @@ public class Args {
     }
 
     private void setStringArg(ArgumentMarshaler m) throws ArgsException {
-        currentArgument++;
         try {
-            m.set(args[currentArgument]);
-        } catch (ArrayIndexOutOfBoundsException e) {
+            m.set(currentArgument.next());
+        } catch (NoSuchElementException e) {
             errorCode = ErrorCode.MISSING_STRING;
             throw new ArgsException();
         }
