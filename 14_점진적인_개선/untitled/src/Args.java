@@ -287,11 +287,11 @@ public class Args {
             String parameter = null;
             try {
                 parameter = currentArgument.next();
-                set(parameter);
+                intValue = Integer.parseInt(parameter);
             } catch (NoSuchElementException e) {
                 errorCode = ErrorCode.MISSING_INTEGER;
                 throw new ArgsException();
-            } catch (ArgsException e) {
+            } catch (NumberFormatException e) {
                 errorParameter = parameter;
                 errorCode = ErrorCode.INVALID_INTEGER;
                 throw e;
