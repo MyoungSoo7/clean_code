@@ -49,7 +49,6 @@ public class Args {
             marshalers.put(elementId, new DoubleArgumentMarshaler());
         }
         else {
-            // TODO: StringArrayArgumentMarshaler 추가되면서 변경되었을 것으로 추측
             throw new ArgsException(ErrorCode.INVALID_FORMAT, elementId, elementTail);
         }
     }
