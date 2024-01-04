@@ -1,6 +1,10 @@
-import ArgsException.ErrorCode;
+package utilities.marshalers;
+
+import utilities.args.ArgsException.ErrorCode;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import utilities.args.ArgsException;
+import utilities.args.ArgumentMarshaler;
 
 public class DoubleArgumentMarshaler implements ArgumentMarshaler {
     private double doubleValue = 0;
@@ -11,16 +15,14 @@ public class DoubleArgumentMarshaler implements ArgumentMarshaler {
             parameter = currentArgument.next();
             doubleValue = Double.parseDouble(parameter);
         } catch (NoSuchElementException e) {
-            errorCode = ErrorCode.MISSING_DOUBLE;
-            throw new ArgsException();
+            throw new ArgsException(ErrorCode.MISSING_DOUBLE);
         } catch (NumberFormatException e) {
-            errorParameter = parameter;
-            errorCode = ErrorCode.INVALID_DOUBLE;
-            throw new ArgsException();
+            throw new ArgsException(ErrorCode.INVALID_DOUBLE, parameter);
         }
     }
-
-    public Object get() {
-        return doubleValue;
+    public static double getValue(ArgumentMarshaler am) {
+        if (am != null && am instanceof DoubleArgumentMarshaler)
+            return ((DoubleArgumentMarshaler) am).doubleValue;
+        return 0.0;
     }
 }

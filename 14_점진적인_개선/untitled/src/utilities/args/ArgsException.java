@@ -1,5 +1,7 @@
+package utilities.args;
+
 public class ArgsException extends Exception {
-    private char errorArgumentId = "\0";
+    private char errorArgumentId = '\0';
     private String errorParameter = "TILT";
     private ErrorCode errorCode = ErrorCode.OK;
 
@@ -50,6 +52,8 @@ public class ArgsException extends Exception {
         return switch (errorCode) {
             case OK -> throw new Exception("TILT: Should not get here.");
             case UNEXPECTED_ARGUMENT -> String.format("Argument -%c unexpected.", errorArgumentId);
+            case INVALID_FORMAT -> String.format("'%s' is not a valid argument format.", errorParameter);
+            case INVALID_ARGUMENT_NAME -> String.format("'%c' is not a valid argument name.", errorArgumentId);
             case MISSING_STRING -> String.format("Could not find string parameter for -%c.", errorArgumentId);
             case INVALID_INTEGER ->
                     String.format("Argument -%c expects an integer but was '%s.", errorArgumentId, errorParameter);
