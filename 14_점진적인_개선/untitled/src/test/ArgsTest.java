@@ -1,3 +1,5 @@
+package test;
+
 import junit.framework.TestCase;
 import utilities.args.Args;
 import utilities.args.ArgsException;

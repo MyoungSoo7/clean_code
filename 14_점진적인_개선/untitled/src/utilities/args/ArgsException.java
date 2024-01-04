@@ -56,7 +56,7 @@ public class ArgsException extends Exception {
             case INVALID_ARGUMENT_NAME -> String.format("'%c' is not a valid argument name.", errorArgumentId);
             case MISSING_STRING -> String.format("Could not find string parameter for -%c.", errorArgumentId);
             case INVALID_INTEGER ->
-                    String.format("Argument -%c expects an integer but was '%s.", errorArgumentId, errorParameter);
+                    String.format("Argument -%c expects an integer but was '%s'.", errorArgumentId, errorParameter);
             case MISSING_INTEGER -> String.format("Could not find integer parameter for -%c.", errorArgumentId);
             case INVALID_DOUBLE ->
                     String.format("Argument -%c expects a double but was '%s'.", errorArgumentId, errorParameter);
