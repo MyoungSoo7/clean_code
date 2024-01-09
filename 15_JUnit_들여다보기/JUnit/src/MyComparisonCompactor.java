@@ -35,7 +35,11 @@ public class MyComparisonCompactor {
     }
 
     private boolean shouldNotCompact() {
-        return expected == null || actual == null || expected.equals(actual);
+        return expected == null || actual == null || areStringEqual();
+    }
+
+    private boolean areStringEqual() {
+        return expected.equals(actual);
     }
 
     private String compactString(String s) {
