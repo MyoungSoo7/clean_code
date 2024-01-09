@@ -61,12 +61,8 @@ public class MyComparisonCompactor {
     }
 
     private String compactString(String source) {
-        String result = DELTA_START + source.substring(prefixLength, source.length() - suffixLength) + DELTA_END;
-        if (prefixLength > 0)
-            result = computeCommonPrefix() + result;
-        if (suffixLength > 0)
-            result = result + computeCommonSuffix();
-        return result;
+        return computeCommonPrefix() + DELTA_START + source.substring(prefixLength, source.length() - suffixLength) + DELTA_END + computeCommonSuffix();
+
     }
 
     private String computeCommonPrefix() {
