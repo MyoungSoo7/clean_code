@@ -2,8 +2,8 @@ public class MyComparisonCompactor {
     private final int contextLength;
     private final String expected;
     private final String actual;
-    String compactExpected;
-    String compactActual;
+    private String compactExpected;
+    private String compactActual;
     private int prefix;
     private int suffix;
 
@@ -13,7 +13,7 @@ public class MyComparisonCompactor {
         this.actual = actual;
     }
 
-    public String compact(String msg) {
+    public String formatCompactedComparison(String msg) {
         if (canBeCompacted()) {
             compactedComparison();
             return Assert.format(msg, compactExpected, compactActual);
