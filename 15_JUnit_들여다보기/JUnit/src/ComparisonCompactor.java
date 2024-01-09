@@ -1,46 +1,49 @@
 public class ComparisonCompactor {
-    private int ctxt;
-    private String s1;
-    private String s2;
-    private int pfx;
-    private int sfx;
+    private int contextLength;
+    private String expected;
+    private String actual;
+    private int prefix;
+    private int suffix;
 
-    public ComparisonCompactor(int ctxt, String s1, String s2) {
-        this.ctxt = ctxt;
-        this.s1 = s1;
-        this.s2 = s2;
+    public ComparisonCompactor(int contextLength, String expected, String actual) {
+        this.contextLength = contextLength;
+        this.expected = expected;
+        this.actual = actual;
     }
 
     public String compact(String msg) {
-        if (s1 == null || s2 == null || s1.equals(s2))
-            return Assert.format(msg, s1, s2);
+        if (expected == null || actual == null || expected.equals(actual))
+            return Assert.format(msg, expected, actual);
 
-        pfx = 0;
-        for (; pfx < Math.min(s1.length(), s2.length()); pfx++) {
-            if (s1.charAt(pfx) != s2.charAt(pfx))
+        prefix = 0;
+        for (; prefix < Math.min(expected.length(), actual.length()); prefix++) {
+            if (expected.charAt(prefix) != actual.charAt(prefix))
                 break;
         }
 
-        int sfx1 = s1.length() - 1;
-        int sfx2 = s2.length() -1;
-        for (; sfx2 >= pfx && sfx1 >= pfx; sfx2--, sfx1--) {
-            if (s1.charAt(sfx1) != s2.charAt(sfx2))
+        int sfx1 = expected.length() - 1;
+        int sfx2 = actual.length() -1;
+        for (; sfx2 >= prefix && sfx1 >= prefix; sfx2--, sfx1--) {
+            if (expected.charAt(sfx1) != actual.charAt(sfx2))
                 break;
         }
 
-        sfx = s1.length() - sfx1;
-        String cmp1 = compactString(s1);
-        String cmp2 = compactString(s2);
+        suffix = expected.length() - sfx1;
+        String cmp1 = compactString(expected);
+        String cmp2 = compactString(actual);
         return Assert.format(msg, cmp1, cmp2);
     }
 
     private String compactString(String s) {
-        String result = "[" + s.substring(pfx, s.length() - sfx + 1) + "]";
-        if (pfx > 0)
-            result = (pfx > ctxt ? "..." : "") + s1.substring(Math.max(0, pfx - ctxt), pfx) + result;
-        if (sfx > 0) {
-            int end = Math.min(s1.length() - sfx + 1 + ctxt, s1.length());
-            result = result + (s1.substring(s1.length() - sfx + 1, end) + (s1.length() - sfx + 1 < s1.length() - ctxt ? "..." : ""));
+        String result = "[" + s.substring(prefix, s.length() - suffix + 1) + "]";
+        if (prefix > 0)
+            result = (prefix > contextLength ? "..." : "") + expected.substring(Math.max(0, prefix - contextLength),
+                    prefix) + result;
+        if (suffix > 0) {
+            int end = Math.min(expected.length() - suffix + 1 + contextLength, expected.length());
+            result = result + (expected.substring(expected.length() - suffix + 1, end) + (
+                    expected.length() - suffix + 1 < expected.length() - contextLength
+                    ? "..." : ""));
         }
         return result;
     }
