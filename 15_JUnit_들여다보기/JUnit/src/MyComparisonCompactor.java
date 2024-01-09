@@ -1,11 +1,11 @@
-public class ComparisonCompactor {
+public class MyComparisonCompactor {
     private int contextLength;
     private String expected;
     private String actual;
     private int prefix;
     private int suffix;
 
-    public ComparisonCompactor(int contextLength, String expected, String actual) {
+    public MyComparisonCompactor(int contextLength, String expected, String actual) {
         this.contextLength = contextLength;
         this.expected = expected;
         this.actual = actual;
