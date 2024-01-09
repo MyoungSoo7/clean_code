@@ -4,8 +4,8 @@ public class MyComparisonCompactor {
     private final String actual;
     private String compactExpected;
     private String compactActual;
-    private int prefix;
-    private int suffix;
+    private int prefixIndex;
+    private int suffixIndex;
 
     public MyComparisonCompactor(int contextLength, String expected, String actual) {
         this.contextLength = contextLength;
@@ -31,47 +31,50 @@ public class MyComparisonCompactor {
     }
 
     private String compactString(String s) {
-        String result = "[" + s.substring(prefix, s.length() - suffix + 1) + "]";
-        if (prefix > 0) {
-            result = (prefix > contextLength ? "..." : "") + expected.substring(Math.max(0, prefix - contextLength),
-                    prefix) + result;
+        String result = "[" + s.substring(prefixIndex, s.length() - suffixIndex + 1) + "]";
+        if (prefixIndex > 0) {
+            result = (prefixIndex > contextLength ? "..." : "") + expected.substring(Math.max(0, prefixIndex - contextLength),
+                    prefixIndex) + result;
         }
-        if (suffix > 0) {
-            int end = Math.min(expected.length() - suffix + 1 + contextLength, expected.length());
-            result = result + (expected.substring(expected.length() - suffix + 1, end) + (
-                    expected.length() - suffix + 1 < expected.length() - contextLength
+        if (suffixIndex > 0) {
+            int end = Math.min(expected.length() - suffixIndex + 1 + contextLength, expected.length());
+            result = result + (expected.substring(expected.length() - suffixIndex + 1, end) + (
+                    expected.length() - suffixIndex + 1 < expected.length() - contextLength
                             ? "..." : ""));
         }
         return result;
     }
 
-    private void findCommonPrefix() {
-        prefix = 0;
+    private void compactedComparison() {
+        prefixIndex = findCommonPrefix();
+        suffixIndex = findCommonSuffix();
+        compactExpected = compactString(expected);
+        compactActual = compactString(actual);
+    }
+
+    private int findCommonPrefix() {
+        int prefixIndex = 0;
         int end = Math.min(expected.length(), actual.length());
-        for (; prefix < end; prefix++) {
-            if (expected.charAt(prefix) != actual.charAt(prefix)) {
+        for (; prefixIndex < end; prefixIndex++) {
+            if (expected.charAt(prefixIndex) != actual.charAt(prefixIndex)) {
                 break;
             }
         }
+        return prefixIndex;
     }
 
-    private void findCommonSuffix() {
+    private int findCommonSuffix() {
         int sfx1 = expected.length() - 1;
         int sfx2 = actual.length() - 1;
-        for (; sfx2 >= prefix && sfx1 >= prefix; sfx2--, sfx1--) {
+        for (; sfx2 >= prefixIndex && sfx1 >= prefixIndex; sfx2--, sfx1--) {
             if (expected.charAt(sfx1) != actual.charAt(sfx2)) {
                 break;
             }
         }
-        suffix = expected.length() - sfx1;
+        return expected.length() - sfx1;
     }
 
-    private void compactedComparison() {
-        findCommonPrefix();
-        findCommonSuffix();
-        compactExpected = compactString(expected);
-        compactActual = compactString(actual);
-    }
+
 
 
 }
