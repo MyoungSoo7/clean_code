@@ -15,11 +15,7 @@ public class MyComparisonCompactor {
         if (shouldNotCompact())
             return Assert.format(msg, expected, actual);
 
-        prefix = 0;
-        for (; prefix < Math.min(expected.length(), actual.length()); prefix++) {
-            if (expected.charAt(prefix) != actual.charAt(prefix))
-                break;
-        }
+        findCommonPrefix();
 
         int sfx1 = expected.length() - 1;
         int sfx2 = actual.length() -1;
@@ -54,6 +50,15 @@ public class MyComparisonCompactor {
                     ? "..." : ""));
         }
         return result;
+    }
+
+    private void findCommonPrefix() {
+        prefix = 0;
+        int end = Math.min(expected.length(), actual.length());
+        for (; prefix < end; prefix++) {
+            if (expected.charAt(prefix) != actual.charAt(prefix))
+                break;
+        }
     }
 
 
