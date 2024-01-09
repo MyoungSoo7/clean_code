@@ -16,15 +16,8 @@ public class MyComparisonCompactor {
             return Assert.format(msg, expected, actual);
 
         findCommonPrefix();
+        findCommonSuffix();
 
-        int sfx1 = expected.length() - 1;
-        int sfx2 = actual.length() -1;
-        for (; sfx2 >= prefix && sfx1 >= prefix; sfx2--, sfx1--) {
-            if (expected.charAt(sfx1) != actual.charAt(sfx2))
-                break;
-        }
-
-        suffix = expected.length() - sfx1;
         String compactExpected = compactString(expected);
         String compactActual = compactString(actual);
         return Assert.format(msg, compactExpected, compactActual);
@@ -59,6 +52,17 @@ public class MyComparisonCompactor {
             if (expected.charAt(prefix) != actual.charAt(prefix))
                 break;
         }
+    }
+
+    private void findCommonSuffix() {
+        int sfx1 = expected.length() - 1;
+        int sfx2 = actual.length() -1;
+        for (; sfx2 >= prefix && sfx1 >= prefix; sfx2--, sfx1--) {
+            if (expected.charAt(sfx1) != actual.charAt(sfx2))
+                break;
+        }
+
+        suffix = expected.length() - sfx1;
     }
 
 
