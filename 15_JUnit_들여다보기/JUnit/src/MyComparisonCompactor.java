@@ -29,9 +29,9 @@ public class MyComparisonCompactor {
         }
 
         suffix = expected.length() - sfx1;
-        String cmp1 = compactString(expected);
-        String cmp2 = compactString(actual);
-        return Assert.format(msg, cmp1, cmp2);
+        String compactExpected = compactString(expected);
+        String compactActual = compactString(actual);
+        return Assert.format(msg, compactExpected, compactActual);
     }
 
     private boolean shouldNotCompact() {
